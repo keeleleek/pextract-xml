@@ -18,9 +18,11 @@ let $part-of-speech := "noun"
 let $example := doc("examples/vot_" || $part-of-speech || ".tdml")
 
 return
+<LexicalResource dtdVersion="16">
   <Lexicon lang="{$lang-code}">
   {
     for $paradigm in $example/pextract:paradigm-file/pextract:paradigm
       return pfile:paradigm-as-lmf-pattern($paradigm, $part-of-speech)
   }
   </Lexicon>
+</LexicalResource>
