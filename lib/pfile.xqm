@@ -106,11 +106,11 @@ declare function pfile:get-inherent-type-msd-map(
 
 
 
-(:~ Represent a pextract paradigm as a LMF Paradigm Pattern :)
+(:~ Represent a pextract paradigm as a LMF Morphological Pattern :)
 declare function pfile:paradigm-as-lmf-pattern(
   $paradigm as element(pextract:paradigm),
   $part-of-speech as xs:string
-) as element(ParadigmPattern)
+) as element(MorphologicalPattern)
 {
   let $paradigm-lemma := pfile:get-attested-wordforms(
     ($paradigm//pextract:paradigm-cell)[1], (: @todo remove hardcoded selector :)
@@ -121,7 +121,7 @@ declare function pfile:paradigm-as-lmf-pattern(
   let $paradigm-attested-variables := pfile:get-attested-var-values-map($paradigm)
   
   return 
-  <ParadigmPattern>
+  <MorphologicalPattern>
     <feat att="id" val="{$paradigm-id}" />
     <feat att="comment" val="{$paradigm-comment}" />
     <feat att="example" val="{$paradigm-lemma}" />
@@ -167,5 +167,5 @@ declare function pfile:paradigm-as-lmf-pattern(
             }
           </TransformSet>
     }
-  </ParadigmPattern>
+  </MorphologicalPattern>
 };
