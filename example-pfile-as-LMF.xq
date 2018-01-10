@@ -20,6 +20,12 @@ let $example := doc("examples/vot_" || $part-of-speech || ".tdml")
 return
 <LexicalResource dtdVersion="16">
   <Lexicon>
+  <GlobalInformation>
+    <feat att="label" val="Votic automatically extracted morphological paradigms"/>
+    <feat att="comment" val="The morphological paradigms has been extracted with the pextract tool."/>
+    <feat att="author" val="Kristian Kankainen"/>
+    <feat att="languageCoding" val="ISO 639-3"/>
+  </GlobalInformation>
   <feat att="language" val="{$lang-code}"/>
   {
     for $paradigm in $example/pextract:paradigm-file/pextract:paradigm
