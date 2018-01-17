@@ -22,18 +22,23 @@ declare function pfile:get-attested-var-values(
 
 
 (:~ Returns the attested variable values of the given paradigm as a map. :)
-declare function pfile:get-attested-var-values-map(
+declare function pfile:get-attested-var-values-maps(
   $paradigm as element(pextract:paradigm)
 ){
-  (: @todo: create map as map {$num : $value } :)
-  let $attested-var-values-map := map:merge(
-    for $variable in pfile:get-attested-var-values($paradigm)/pextract:variable-set/pextract:variable
-      let $num := xs:integer($variable/pextract:variable-number/data())
-      let $val := $variable/pextract:variable-value/string()
-      return
-        map:entry($num, $val)
+  (: @todo: return a list of maps as for variable-set return map:entry() :)
+  
+  let $return-list-of-maps := (
+      for $variable-set in pfile:get-attested-var-values($paradigm)/pextract:variable-set
+        let $attested-var-values-map := map:merge(
+          for $variable in $variable-set/pextract:variable
+            let $num := xs:integer($variable/pextract:variable-number/data())
+            let $val := $variable/pextract:variable-value/string()
+            return
+              map:entry($num, $val)
+        )
+      return $attested-var-values-map
   )
-  return $attested-var-values-map
+  return $return-list-of-maps
 };
 
 
@@ -118,7 +123,8 @@ declare function pfile:paradigm-as-lmf-pattern(
   )[1]
   let $paradigm-id := "as" || functx:capitalize-first($paradigm-lemma)
   let $paradigm-comment := concat('inflectional paradigm pattern for ', $paradigm-lemma)
-  let $paradigm-attested-variables := pfile:get-attested-var-values-map($paradigm)
+  (: is pfile:get-attested-var-values-maps used elsewhere if we change it to return a list? :)
+  let $paradigm-attested-variables := pfile:get-attested-var-values-maps($paradigm)
   
   return 
   <MorphologicalPattern>
@@ -126,14 +132,20 @@ declare function pfile:paradigm-as-lmf-pattern(
     <feat att="comment" val="{$paradigm-comment}" />
     <feat att="example" val="{$paradigm-lemma}" />
     <feat att="partOfSpeech" val="{$part-of-speech}" />
-    <AttestedVariableValues>
+    <AttestedParadigmVariableSets>
       {
-        map:for-each(
-          $paradigm-attested-variables,
-          function ($key, $value) {<feat att="{$key}" val="{$value}" />}
-        )
+      for $attested-variable-set in $paradigm-attested-variables
+        return
+          <AttestedParadimVariableSet>
+            {
+            map:for-each(
+              $attested-variable-set,
+              function ($key, $value) {<feat att="{$key}" val="{$value}" />}
+            )
+            }
+          </AttestedParadimVariableSet>
       }
-    </AttestedVariableValues>
+    </AttestedParadigmVariableSets>
     {
       for $cell in $paradigm//pextract:paradigm-cell
         let $msd-feats := pfile:get-cell-msd-map($cell)
@@ -168,4 +180,20 @@ declare function pfile:paradigm-as-lmf-pattern(
           </TransformSet>
     }
   </MorphologicalPattern>
+};
+
+
+
+(:~ Simple wrapper for using the pextract python script :)
+declare function pfile:pextract-cmd(
+  $pextract-py as xs:string, 
+  $infile as xs:string, 
+  $outfile as xs:string,
+  $sys-encoding as xs:string?)
+{
+  let $encoding := if($sys-encoding)
+                   then($sys-encoding)
+                   else("latin1")
+  return
+    proc:system("python", ($pextract-py, "<", $infile (:, ">", $outfile:) ), $encoding)
 };
