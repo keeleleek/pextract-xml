@@ -25,8 +25,6 @@ declare function pfile:get-attested-var-values(
 declare function pfile:get-attested-var-values-maps(
   $paradigm as element(pextract:paradigm)
 ){
-  (: @todo: return a list of maps as for variable-set return map:entry() :)
-  
   let $return-list-of-maps := (
       for $variable-set in pfile:get-attested-var-values($paradigm)/pextract:variable-set
         let $attested-var-values-map := map:merge(
@@ -123,7 +121,7 @@ declare function pfile:paradigm-as-lmf-pattern(
   )[1]
   let $paradigm-id := "as" || functx:capitalize-first($paradigm-lemma)
   let $paradigm-comment := concat('inflectional paradigm pattern for ', $paradigm-lemma)
-  (: is pfile:get-attested-var-values-maps used elsewhere if we change it to return a list? :)
+  
   let $paradigm-attested-variables := pfile:get-attested-var-values-maps($paradigm)
   
   return 
