@@ -134,14 +134,14 @@ declare function pfile:paradigm-as-lmf-pattern(
       {
       for $attested-variable-set in $paradigm-attested-variables
         return
-          <AttestedParadimVariableSet>
+          <AttestedParadigmVariableSet>
             {
             map:for-each(
               $attested-variable-set,
               function ($key, $value) {<feat att="{$key}" val="{$value}" />}
             )
             }
-          </AttestedParadimVariableSet>
+          </AttestedParadigmVariableSet>
       }
     </AttestedParadigmVariableSets>
     {
