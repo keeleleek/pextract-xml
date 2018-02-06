@@ -164,12 +164,12 @@ declare function pfile:paradigm-as-lmf-pattern(
                     if(matches($pattern-part, "\d+"))
                     then(
                       (: the case it is a variable number :)
-                      <feat att="operator" val="addAfter" />,
+                      <feat att="operator" val="addVariable" />,
                       <feat att="variableNumber" val="{$pattern-part}" />
                     )
                     else(
                       (: the case it is a constant string :)
-                      <feat att="operator" val="addAfter" />,
+                      <feat att="operator" val="addConstant" />,
                       <feat att="stringValue" val="{$pattern-part}" />
                     )
                   }
