@@ -192,6 +192,8 @@ declare function pfile:pextract-cmd(
   let $encoding := if($sys-encoding)
                    then($sys-encoding)
                    else("latin1")
-  return
-    proc:system("python", ($pextract-py, "<", $infile (:, ">", $outfile:) ), $encoding)
+  let $infile-contents := lazy:cache(file:read-text($infile, "UTF-8"))
+  let $outfile-contents :=
+    proc:system("python", ($pextract-py), map { "input": $infile-contents, "encoding": $encoding } )
+  return file:write-text($outfile, $outfile-contents)
 };
